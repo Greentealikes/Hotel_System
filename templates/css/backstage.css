@@ -1,0 +1,56 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
+body{
+    background-color: #dddddd;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.btn{
+    width: 100px;
+    margin-top: 25px;
+    margin-right:25px;
+    margin-left:25px;
+}
+
+.text {
+    font-family:"微软雅黑", "Dosis", sans-serif;
+    font-size: 80px;
+    text-align: center;
+    font-weight: bold;
+    line-height:200px;
+    text-transform:uppercase;
+    position: relative;
+}
+
+@media (min-width: 992px){
+.container {
+     max-width: 990px; 
+}}
+
+@media (min-width: 1300px){
+.container {
+     max-width: 1240px; 
+}}
+
+.container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom:100px;
+}
+
+.form_content{
+    background-color: #eeeeee;
+    box-shadow:3px 3px 5px 6px #cccccc;
+}
+
+.nav_content{
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.title_content{
+  width: 100%;
+
+}
