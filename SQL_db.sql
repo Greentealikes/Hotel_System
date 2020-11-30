@@ -16,7 +16,10 @@ CREATE TABLE Userdb (
     usnum VARCHAR(11) NOT NULL COMMENT '顧客人數',
     title VARCHAR(20) NOT NULL COMMENT '訂房類型',
     category VARCHAR(20) NOT NULL COMMENT '訂房種類',
-    usadd VARCHAR(255) NOT NULL COMMENT '備註欄'
+    user_extra  VARCHAR(2) NOT NULL COMMENT '加床',
+    user_name VARCHAR(30) NOT NULL COMMENT '使用帳號',
+    usadd VARCHAR(255) NOT NULL COMMENT '備註欄',
+    ustype VARCHAR(128) COMMENT '查詢欄'
 )ENGINE = MYISAM DEFAULT CHARSET = utf8 COMMENT = "顧客資料庫";
 
 SELECT * FROM Userdb;
@@ -26,9 +29,9 @@ VALUES ('Lars','34','0978466897','okpt@gmail.com','台南永康','2020-07-18','2
 /*會員、管理員資料*/
 CREATE TABLE Users (
     uid mediumint(8) unsigned NOT NULL AUTO_INCREMENT ,
-    uname  varchar(25) NOT NULL COMMENT '會員姓名',
-    name varchar(30) NOT NULL COMMENT '帳號',
-    pass varchar(30) NOT NULL COMMENT '會員姓名',   
+    uname  varchar(25) NOT NULL COMMENT '帳號',
+    name varchar(30) NOT NULL COMMENT '會員姓名',
+    pass varchar(255) NOT NULL COMMENT '會員密碼',   
     tel  varchar(11) NOT NULL COMMENT '會員電話',
     email varchar(50) NOT NULL COMMENT '會員信箱',
     kind enum('0','1') NOT NULL DEFAULT '0' COMMENT '會員權限',

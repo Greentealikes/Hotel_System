@@ -42,7 +42,6 @@
   }
 
 </style>
-
 <div class="site-wrap" id="home-section">
   <div class="site-section">
     <div class="row">

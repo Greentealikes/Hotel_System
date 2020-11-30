@@ -1,5 +1,17 @@
 <?php
   require_once 'head.php';   
+  require_once 'status.php';   
+
+/*--++++++++++++++++++++++++++++++++++++++++++ 
+功能簡述:
+  系統端：
+    登入系統login
+    登出系統logout
+    註冊服務reg
+  介面端：
+    註冊介面reg_form(op=reg_form&pageid=6)
+    登入介面(login.php)
+++++++++++++++++++++++++++++++++++++++++++--*/
 
   /*--++++++++++++++++++++++++++++++++++++++++++ 
   $op、$token: 登入狀態
@@ -12,22 +24,6 @@
   $sn = system_CleanVars($_REQUEST, 'sn', '', 'int');
   $using = system_CleanVars($_REQUEST, 'using', '', 'string');
 
-  
-  /*--++++++++++++++++++++++++++++++++++++++++++ 
-  
-  ++++++++++++++++++++++++++++++++++++++++++--*/
-  class Snstatus{
-    public $sn_success = "登入成功";
-    public $sn_error = "登入失敗";
-    public $sn_logout = "登出成功";
-
-    public function getsnstatus($status=null){
-      if($status == $this->sn_error)
-        return 0;
-      return 1;
-    }
-  }
- 
   $Sn_status = new Snstatus;
 
   #op判斷
@@ -39,7 +35,7 @@
           redirect_header("index.php",$msg, 3000, $sn);
       }
       else{     
-        $sn = $Sn_status->getsnstatus($Sn_status->sn_error);         
+        $sn = $Sn_status->getsnstatus($Sn_status->sn_error);  
         redirect_header("login.php", $msg, 3000, $sn);     
       }
       exit;
@@ -81,10 +77,6 @@
 
   $smarty->display('theme.tpl');
 
-
-   /*--++++++++++++++++++++++++++++++++++++++++++ 
-  
-  ++++++++++++++++++++++++++++++++++++++++++--*/
   function reg(){
     global $db;
 
@@ -103,9 +95,9 @@
       redirect_header("login.php", '密碼不一致' , 3000,$sn);
       //die("密碼不一致");
     }
-    else{
-      $_POST['pass'] = password_hash($_POST['chk_pass'], PASSWORD_DEFAULT);
-    }
+    
+    $_POST['pass'] = password_hash($_POST['chk_pass'], PASSWORD_DEFAULT);
+    
       $sql="INSERT INTO `users` 
           (`uname`, `pass`, `name`, `tel`, `email`,`kind`,`token`)  
           VALUES 
@@ -136,8 +128,9 @@
     $_POST['pass'] = db_filter($_POST['pass'], '密碼');
     
     $sql= "SELECT * FROM `Users` WHERE `uname` = '{$_POST['uname']}'";
-
+   
     $result = $db->query($sql) or die($db->error() . $sql);
+    
     $row = $result->fetch_assoc() or redirect_header("login.php", "帳號輸入錯誤", 3000, 0);     
   
     $row['uname'] = htmlspecialchars($row['uname']);
@@ -148,7 +141,6 @@
     $row['email'] = htmlspecialchars($row['email']);
     $row['pass'] = htmlspecialchars($row['pass']);
     $row['token'] = htmlspecialchars($row['token']);
-   
 
     if(password_verify($_POST['pass'],$row['pass'])){
       $_SESSION['user']['uid'] = $row['uid'];

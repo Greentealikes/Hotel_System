@@ -1,5 +1,7 @@
 <script type="text/javascript" src="<{$xoAppUrl}>class/My97DatePicker/WdatePicker.js"></script>
 
+<-- 填寫聯絡資訊 -->
+
 <div class = "container text-left ">
   <div class ="alert" role = "alert">
     <h4 class="alert-heading">聯絡資訊</h4>
@@ -77,7 +79,7 @@
           <tr>
               <th scope="col">房型種類</th>
               <th scope="col">房型類別</th>
-              <th scope="col">人數</th>
+              <th scope="col">房間人數</th>
               <th scope="col">單價</th>
               <th scope="col">加床</th>
               <th scope="col">數量</th>
@@ -86,6 +88,9 @@
       </thead>
   
       <tbody>
+
+      <!-- 顯示表格並傳輸隱藏資訊(整個表格的資料:訂房名稱、訂房種類、訂房數量、訂房單價) -->
+
           <{for $var = 0 to $length}>
           <tr>
             <th scope="row" class = "ta_title"><{$json_table_rows[0]['DATE_TITLE'][$var]}></th>
@@ -96,16 +101,12 @@
 
             <td><div class="ta_num"><{$json_table_rows[0]['DATE_NUM'][$var]}></div></td>
             <input type="hidden" name="ta_num" value="<{$json_table_rows[0]['DATE_NUM'][$var]}>" id="ta_num">
-
+            
             <td><div class="ta_price"><{$json_table_rows[0]['DATE_PRICE'][$var]}></div></td>  
-             <input type="hidden" name="ta_price" value="<{$json_table_rows[0]['DATE_PRICE'][$var]}>" id="ta_price">
+            <input type="hidden" name="ta_price" value="<{$json_table_rows[0]['DATE_PRICE'][$var]}>" id="ta_price">
 
-            <td>
-            <{if $json_table_rows[0]['DATE_ROOMEXTRA'][$var] > 0}>
-                <div class="ta_roomextra"><i class="fas fa-check"></i></div>
-                <input type="hidden" name="ta_roomextra" value="<{$json_table_rows[0]['DATE_ROOMEXTRA'][$var]}>" id="ta_roomextra">
-            <{/if}>
-            </td>
+            <td><div class="ta_price"><{$json_table_rows[0]['DATE_ROOMEXTRA'][$var]}></div></td>  
+            <input type="hidden" name="ta_price" value="<{$json_table_rows[0]['DATE_ROOMEXTRA'][$var]}>" id="ta_price">
 
             <td><div class="ta_roomsum"><{$json_table_rows[0]['DATE_ROOMNUMSUM'][$var]}></div></td>
             <input type="hidden" name="ta_roomsum" value="<{$json_table_rows[0]['DATE_ROOMNUMSUM'][$var]}>" id="ta_roomsum">
@@ -130,6 +131,17 @@
     </table>
   </div>
 </div>
+
+ <!-- 傳輸隱藏資訊(訂房名稱、訂房種類、加床數量)-->
+<input type="hidden" class="form-control" id="book_kind" name="book_kind" autocomplete="off" 
+  value = "<{for $var = 0 to $length}><{if $json_table_rows[0]['DATE_ROOMNUMSUM'][$var] > 0}><{$json_table_rows[0]['DATE_TITLE'][$var]}><{/if}><{/for}>">
+
+<input type="hidden" class="form-control" id="book_category" name="book_category" autocomplete="off" 
+  value = "<{for $var = 0 to $length}><{if $json_table_rows[0]['DATE_ROOMNUMSUM'][$var] > 0}><{$json_table_rows[0]['DATE_CATEGORY'][$var]}><{/if}><{/for}>">
+
+<input type="hidden" name="ta_roomextra" id="ta_roomextra" autocomplete="off"
+  value="<{for $var = 0 to $length}><{if $json_table_rows[0]['DATE_ROOMNUMSUM'][$var] > 0}><{$json_table_rows[0]['DATE_ROOMEXTRA'][$var]}><{/if}><{/for}>" >
+           
 
 <input type="hidden" name="book" value="on_connecting" id="book">
 <input type="hidden" name="reservation_sn" value="<{$sn}>" id="reservation_sn">

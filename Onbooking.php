@@ -1,10 +1,15 @@
 <?php
 require_once 'head.php';
-require_once 'reservation_status.php';
+require_once 'status.php';
 
 /*--++++++++++++++++++++++++++++++++++++++++++ 
 功能簡述:
-使用者訂購系統 
+使用者訂購系統
+一、線上預訂->住宿預定 book=Page_date
+    1.選擇機房下訂(book=Page_date) 2.注意事項(book=Page_date)
+    3.填寫聯絡資料(book=Page_connection) 4.線上預訂完成(book=Page_success)
+
+二、線上預訂->住宿查詢 book=booking_query_form&using=no
 ++++++++++++++++++++++++++++++++++++++++++--*/
 
 /*--++++++++++++++++++++++++++++++++++++++++++ 
@@ -16,14 +21,10 @@ $using:使用狀態
 $op = system_CleanVars($_REQUEST, 'op', 'op_list', 'string');
 $book = system_CleanVars($_REQUEST, 'book', 'Page_date', 'string');
 $using = system_CleanVars($_REQUEST, 'using', '', 'string');
-
 $usid = system_CleanVars($_REQUEST, 'usid', '', 'int');
 
 global $error;
-$Error_status = new Error_status;
 $bookpage = new Page_attr;
-
-
 
 switch ($book){
     case "Page_date":
@@ -85,6 +86,7 @@ $smarty->assign("book", $book);
 
 $smarty->assign("error", $error);
 $smarty->assign("using", $using);   
+$smarty->assign("ok_times", "");
 
 $smarty->display('theme.tpl');
 
@@ -138,7 +140,6 @@ function reservation_dating(){
                 'post_totalprice'=>$_POST['post_totalprice']);
 
     $_SESSION['cudate_json'] = $post_json;
-    //die(json_encode($post_json,JSON_UNESCAPED_UNICODE));
 }
 
 /*--++++++++++++++++++++++++++++++++++++++++++ 
@@ -216,6 +217,8 @@ function reservation_connectpay_form(){
 function reservation_connectpaying(){
     global $db,$smarty;
 
+    $user_name = $_SESSION['user']['uname'];
+    
     //聯絡資訊
     $_POST['cuname'] =  isset( $_POST['cuname'])? $db->real_escape_string($_POST['cuname']) : "";
     $_POST['cuphone'] =  isset( $_POST['cuphone'])? $db->real_escape_string($_POST['cuphone']) : "";
@@ -225,14 +228,22 @@ function reservation_connectpaying(){
     $_POST['dateout'] =  isset( $_POST['dateout'])?  $db->real_escape_string($_POST['dateout']) : "";
     $_POST['cuaddress'] =  isset( $_POST['cuaddress'])?  $db->real_escape_string($_POST['cuaddress']) : "";
     $_POST['cuadd'] =  isset( $_POST['cuadd'])?  $db->real_escape_string($_POST['cuadd']) : "";
-
+ 
+    #訂購房型
+    $_POST['book_kind'] =  isset( $_POST['book_kind'])?  $db->real_escape_string($_POST['book_kind']) : "";
+    $_POST['book_category'] =  isset( $_POST['book_category'])?  $db->real_escape_string($_POST['book_category']) : "";
+    $_POST['ta_roomextra'] =  isset( $_POST['ta_roomextra'])?  $db->real_escape_string($_POST['ta_roomextra']) : "";
+    
     //房型訂單編號
     $_POST['reservation_sn'] =  isset( $_POST['reservation_sn'])?  $db->real_escape_string($_POST['reservation_sn']) : "";
 
     $sql="INSERT INTO userdb
-    (`cu_sn`,`usname`,`usphone`,`usemail`,`datein`,`dateout`,`usnum`,`usarea`,`usadd`) 
-    VALUES ('{$_POST['reservation_sn']}','{$_POST['cuname']}','{$_POST['cuphone']}','{$_POST['cuemail']}',
-    '{$_POST['datein']}','{$_POST['dateout']}','{$_POST['cupeople']}','{$_POST['cuaddress']}','{$_POST['cuadd']}')";
+    (`cu_sn`,`usname`,`usphone`,`usemail`,`datein`,`dateout`,`usnum`,`usarea`,`usadd`,
+        `title`,`category`,`user_extra`,`user_name`) 
+    VALUES ('{$_POST['reservation_sn']}','{$_POST['cuname']}','{$_POST['cuphone']}',
+    '{$_POST['cuemail']}','{$_POST['datein']}','{$_POST['dateout']}','{$_POST['cupeople']}',
+    '{$_POST['cuaddress']}','{$_POST['cuadd']}','{$_POST['book_kind']}','{$_POST['book_category']}',
+    '{$_POST['ta_roomextra']}','$user_name')";
     
     $db->query($sql) or die($db->error() . $sql); 
     $userdb_sn = mysqli_insert_id($db);
@@ -262,178 +273,3 @@ function reservation_connectpaying(){
     $_POST['ta_sumtotal'] =  isset( $_POST['ta_sumtotal'])?  $db->real_escape_string($_POST['ta_sumtotal']) : "";
 
 }
-/*
-function reservation_whether_date($db,$smarty){
-    $sql = "SELECT `usid`,`cu_sn`,`datein`,`dateout` FROM `userdb` WHERE 1";
-    $result = $db->query($sql) or die($db->error() . $sql);  
-    $whether_rows=[];
-    $dates = [];
-
-    while($whether_row= $result->fetch_assoc()){
-        $whether_row['datein'] = htmlspecialchars($whether_row['datein']);
-        $whether_row['dateout'] = htmlspecialchars($whether_row['dateout']); 
-        $dates = time_difference($whether_row['datein'],$whether_row['dateout']);
-        $whether_rows[] = $whether_row;
-    }
-    $smarty->assign("whether_rows",$whether_rows); 
-    $smarty->assign("dates",$dates); 
-}
-
-function time_difference($datein,$dateout){
-    $date=floor((strtotime($dateout)-strtotime($datein))/86400);
-    $dates = [];
-    for($times = 1 ; $times <= $date ; $times ++){
-        $dates[$times] = date("Y-m-d",strtotime("+".$times." day",strtotime($datein))) ;
-    }
-    return $dates;
-}
-
-//看情況會不會用道
-function datetableinfo(){
-    $weekarray=array("(日)","(一)","(二)","(三)","(四)","(五)","(六)");
-    $year = date("Y", time()); 
-    $month = date("m", time()); 
-    $day = date("d", time()); 
-    $curMonthDays = date('t');
-    $dates = [];
-    //die (date("w",mktime(0, 0, 0, 9, 1, 2020)));
-    for($times = 0; $times < $curMonthDays; $times ++){
-        $dates[$times] = $month."/".($times+1);
-    }
-    return $dates;
-}
-
-
-*/
-
-
-
-
-
-/*--++++++++++++++++++++++++++++++++++++++++++ 
-使用者預約頁面
-資料庫：prods
-++++++++++++++++++++++++++++++++++++++++++--
-
-
-/*
-function booking_form(){
-    global $db,$smarty;
-    $kinds_sql="SELECT * FROM `prods` LEFT JOIN `prods_full` ON  prods.present_sn = prods_full.sn 
-        WHERE prods.kind = 1";
-       
-    $kind_result = $db->query($kinds_sql) or die($db->error() . $kinds_sql);  
-    $kind_rows=[];
-
-    while($kind_row = $kind_result->fetch_assoc()){
-        $kind_row['category'] = htmlspecialchars($kind_row['category']);  
-        $kind_row['sn'] = htmlspecialchars($kind_row['sn']);      
-        $kind_row['title'] = htmlspecialchars($kind_row['title']);  
-        $kind_row['people_num'] = htmlspecialchars($kind_row['people_num']); 
-        $kind_row['room_extra'] = htmlspecialchars($kind_row['room_extra']);  
-        $kind_row['price'] = htmlspecialchars($kind_row['price']);  
-        $kind_row['enable'] = htmlspecialchars($kind_row['enable']);             
-        $kind_rows[] = $kind_row;
-    }
-    $smarty->assign("kind_rows",$kind_rows); 
-    return "預定表單內容"; 
-}*/ 
-
-/*--++++++++++++++++++++++++++++++++++++++++++ 
-on_booking 預訂系統檢查
-資料庫：prods
-++++++++++++++++++++++++++++++++++++++++++--
-function on_booking(){
-    global $smarty,$db;
-    $reservation_status = new reservation_status;
-    $error = 0;
-    
-    $_POST['usname'] =  isset( $_POST['usname'])? $db->real_escape_string($_POST['usname']) : "";
-    $_POST['usphone'] =  isset( $_POST['usphone'])? $db->real_escape_string($_POST['usphone']) : "";
-    $_POST['usemail'] =  isset( $_POST['usemail'])? $db->real_escape_string($_POST['usemail']) : "";
-    $_POST['usarea'] =  isset( $_POST['usarea'])? $db->real_escape_string($_POST['usarea']) : "";
-    $_POST['datein'] =  isset( $_POST['datein'])? $db->real_escape_string($_POST['datein']) : "";
-    $_POST['dateout'] =  isset( $_POST['dateout'])?  $db->real_escape_string($_POST['dateout']) : "";
-    $_POST['usnum'] =  isset( $_POST['usnum'])?  $db->real_escape_string($_POST['usnum']) : "";
-    $_POST['ustypes'] =  isset( $_POST['ustypes'])?  $db->real_escape_string($_POST['ustypes']) : "";
-    $_POST['usadd'] =  isset( $_POST['usadd'])?  $db->real_escape_string($_POST['usadd']) : "";
-    
-    #入住日期不得大於退房日期
-    if($_POST['datein'] !="" || $_POST['dateout'] != ""){
-        if( $_POST['datein'] > $_POST['dateout'])
-            $error = $reservation_status->fail1_num2;
-    }
-
-    #人數限制
-    if($_POST['usnum'] == "" or $_POST['usnum'] < $min_num_limit or $_POST['usnum'] > $max_num_limit){
-        $error = $reservation_status->fail1_num3;
-    }
-    
-    #以電話及信箱確定資料是否重複
-    $sql= "SELECT `usphone`,`usemail` FROM `userdb` WHERE `usphone` = '{$_POST['usphone']}' AND `usemail` = '{$_POST['usemail']}'";   
-    $result = $db->query($sql) or die($db->error() . $sql);
-
-    $row = $result->fetch_assoc();  
-    if($row){
-        $row['usphone'] = htmlspecialchars($row['usphone']);
-        $row['usemail'] = htmlspecialchars($row['usemail']);
-    }   
-
-    if($_POST['usemail'] == $row['usemail'] && $_POST['usphone'] == $row['usphone']){
-        $error =  $error = $reservation_status->fail1_num1;
-    } 
-
-    if($error == 0){
-        $insert_sql = "INSERT INTO userdb
-        (`usname`,`usphone`,`usemail`,`usarea`,`datein`,`dateout`,`usnum`,`ustype`,`usadd`) 
-        VALUES ('{$_POST['usname']}','{$_POST['usphone']}','{$_POST['usemail']}','{$_POST['usarea']}',
-        '{$_POST['datein']}','{$_POST['dateout']}','{$_POST['usnum']}','{$_POST['ustypes']}','{$_POST['usadd']}')";
-        
-        $db->query($insert_sql)or die($db->error() . $insert_sql);   
-        
-        booking_result($_POST['usemail']); 
-        return "1";
-    }
-
-    return $reservation_status->getreservation_statustext($error);
-}
-
-#訪客查詢資料   
-function booking_result($email){
-    global $smarty,$db;   
-
-    $sql= "SELECT * FROM `userdb` WHERE  `usemail` = '{$email}'";   
-   
-    $result = $db->query($sql) or die($db->error() . $sql);    
-    $row = $result->fetch_assoc(); 
-
-    if($row){
-        $row['usname'] = htmlspecialchars($row['usname']);
-        $row['usphone'] = htmlspecialchars($row['usphone']);
-        $row['usemail'] = htmlspecialchars($row['usemail']);
-        $row['usarea'] = htmlspecialchars($row['usarea']);
-        $row['datein'] = htmlspecialchars($row['datein']);  
-        $row['dateout'] = htmlspecialchars($row['dateout']); 
-        $row['usnum'] = (int)($row['usnum']);    
-        $row['ustype'] = htmlspecialchars($row['ustype']);  
-        $row['usadd'] = htmlspecialchars($row['usadd']);
-    }
-
-    
-    $kinds_sql="SELECT * FROM `prods` WHERE `kind_sn` = '{$row['ustype']}'";
-    $kind_result = $db->query($kinds_sql) or die($db->error() . $kinds_sql);  
-    
-    $kind_row = $kind_result->fetch_assoc();
-    if($kind_row){
-        $kind_row['kind_sn'] = htmlspecialchars($kind_row['kind_sn']);  
-        $kind_row['sn'] = htmlspecialchars($kind_row['sn']);      
-        $kind_row['title'] = htmlspecialchars($kind_row['title']);  
-        $kind_row['enable'] = htmlspecialchars($kind_row['enable']);
-    }
-      
-    $smarty->assign("kind_row",$kind_row);  
-    $smarty->assign("row",$row);  
-}
-
-
-*/ 

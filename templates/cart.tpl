@@ -25,37 +25,36 @@
 <body>
 <div class = "container">
     <div class="text effect01 title_content">購物車系統</div> 
-    <table class="table table-striped table-bordered table-hover table-sm tablesorter"  id="myTable" >
-    <thead> <tr>
-        <th scope="col">商品名稱</th>
-        <th scope="col">商品種類</th>
-        <th scope="col">商品類別</th>
-        <th scope="col">價格</th>
-        <th scope="col">數量</th>
-        <th scopt="col">功能</th>
-    </tr> </thead>
 
+    <table class="table table-striped table-bordered table-hover table-sm tablesorter"  id="myTable" >
+    <thead>
+        <tr>
+        <th scope="col">房型名稱</th>
+        <th scope="col">房型種類</th>
+        <th scope="col">數量</th>
+        <th scope="col">金額</th>
+        <th scope="col">加床</th>
+        </tr>
+    </thead>
     <tbody>
-        <td>商品名稱</td>
-        <td>商品種類</td>
-        <td>商品類別</td>
-        <td><span class="price">100</span></td>
-        <td>
-            <select class="selectpicker">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-            </select>
-        </td>
-        <td>
-            <a href="javascript:void(0)" onclick="prods_delete(<{$row.sn}>,<{$row.present_sn}>);">
-                <i class="far fa-trash-alt"></i>
-            </a>
-        </td>
-    </tbody>   
+      <{foreach $rows as $row}>
+        <tr>
+            <td><{$row.title}></td>
+            <td><{$row.category}></td>
+            <td><{$row.usnum}></td>
+            <td><{$row.price}></td>
+            <td><{$row.user_extra}></td>
+          
+        </tr>
+      <{foreachelse}>
+        <tr>
+          <td colspan=5>目前沒有資料</td>
+        </tr>
+      <{/foreach}>
+    </tbody>
   </table>
 
-    <div id="total" class="" >總金額：
+    <div id="total">總金額：
         <span class="totalnum"></span>
     </div>
   

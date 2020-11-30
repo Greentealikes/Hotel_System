@@ -152,6 +152,7 @@ function book_list($usid = null){
     $sql = "";
     
     $query_post = isset($_POST['qetxt']) ? db_filter($_POST['qetxt']) : ""; 
+    
     if($usid && $query_post != ""){
         $sql = "SELECT * FROM `Userdb` WHERE usname = '$query_post' OR usphone = '$query_post' OR
             usemail = '$query_post' OR usnum = '$query_post' OR ustype = '$query_post'";

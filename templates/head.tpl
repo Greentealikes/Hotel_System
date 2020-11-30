@@ -184,37 +184,34 @@
 
                         <!-- about.php?op=about_into -->  
 
+                        <!--
                             <li class="nav-item submenu dropdown">
                                 <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">公告消息</a>
                                 <ul class= "dropdown-menu">
                                     <li class="nav-item"><a class="nav-link" href="news.php">最新消息</a></li> 
                                 </ul>
                             </li>            
-
-                             <li class="nav-item submenu dropdown">
+                        -->
+                        
+                            <li class="nav-item submenu dropdown">
                                 <a href="services.php" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">民宿服務</a>
                                 <ul class="dropdown-menu">
                                     <li class="nav-item"><a class="nav-link" href="services.php">房型介紹</a></li>                           
                                     <li class="nav-item"><a class="nav-link" href="services.php?op=checkin_info">入住資訊</a></li> 
                                 </ul>
-                            </li>        
-                          
+                            </li>     
                             
                             <li class="nav-item submenu dropdown">
                                 <a href="Onbooking.php?book=booking_form" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">線上預訂</a>
                                 <ul class="dropdown-menu">                                  
                                     <li class="nav-item"><a class="nav-link" href="Onbooking.php?book=Page_date">住宿預定</a></li>                               
                                     <li class="nav-item"><a class="nav-link" href="Onbooking.php?book=booking_query_form&using=no">住宿查詢</a></li>
-                                    
                                 </ul>
                             </li>
-
-                            <li class="nav-item submenu dropdown">
-                                <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">檔案下載</a>
-                            </li>  
-
-                            <{if $smarty.session.user.kind === 1}>      
-                                 <li class="nav-item"><a href="cart.php" class="nav-link">購物車</a></li>
+                            <{if $smarty.session.user.kind === 0}>
+                                 <li class="nav-item"><a href="cart.php" class="nav-link">我的購物車</a></li>
+                            <{/if}> 
+                            <{if $smarty.session.user.kind === 1}>    
                                 <li class="nav-item"><a href="user.php" class="nav-link">管理員</a></li>
                                 <li class="nav-item"><a href="login.php?op=logout&pageid=6" class="nav-link">Logout</a></li>   
                             <{elseif  $smarty.session.user.kind === 0}> 

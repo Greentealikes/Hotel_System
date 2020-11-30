@@ -1,5 +1,4 @@
 /uploads/img/*.jpg
 /uploads/img/*.png
 /uploads/img/*.jfif
-/php/sqlConfig.php
 /templates_c/*.php
