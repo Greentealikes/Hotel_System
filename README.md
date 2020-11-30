@@ -6,6 +6,6 @@ Smarty是一個PHP下的網頁模板系統。Smarty基本上是一種為了將�
 > * 系統採用php7.0+mysql並搭配Smarty模板技術進行規劃。
 
 ## 使用方法
-1.請在mysql底下載入sql語法(SQL_db.sql)，該檔案放在專案底下。
-2.於php/sqlConfig.php更改成你的mysql資訊(伺服器、帳號、密碼)
+1.請在mysql底下載入sql語法(SQL_db.sql)，該檔案放在專案底下。  
+2.於php/sqlConfig.php更改成你的mysql資訊(伺服器、帳號、密碼)  
 3.完成
